@@ -19,6 +19,19 @@ const canonical = new URL(Astro.url.pathname, site.url);
 <meta name="generator" content={Astro.generator} />
 <link rel="icon" href="/assets/images/logo.png" />
 
+<!-- Set theme before paint to avoid a flash of the wrong color scheme. -->
+<script is:inline>
+  (function () {
+    try {
+      var stored = localStorage.getItem('theme');
+      var dark =
+        stored === 'dark' ||
+        (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.classList.toggle('dark', dark);
+    } catch (e) {}
+  })();
+</script>
+
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />

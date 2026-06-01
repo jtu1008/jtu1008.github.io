@@ -5,11 +5,15 @@ title: About me
 
 <span style="font-size:1em">**Jingxuan Tu**</span>
 
-I am a Ph.D candidate at Brandeis University working
-with Professor James Pustejovsky, where I study Computational Linguistics
-and Artificial Intelligence. I started my doctoral work in 2019.
+**Currently:** Applied Scientist III at [CodaMetrix](https://www.codametrix.com/), working on
+LLMs and agentic systems for autonomous medical coding. My work spans the AI lifecycle:
 
-<span style="font-size:0.8em">**Email**: jxtu at brandeis dot edu</span><br/>
-<span style="font-size:0.8em">**Address**: Volen Center for Complex Systems 110,
-Brandeis University, 415 South St.
-Waltham, MA 02454</span>
+- translating partner requirements into problem definitions
+- designing data collection &amp; annotation workflows
+- building R&D pipelines across clinical service lines (e.g., radiology)
+- delivering and evaluating results in production
+
+Previously, I completed my Ph.D. in Computational Linguistics at Brandeis University,
+advised by Professor James Pustejovsky.
+
+<span style="font-size:0.8em">**Email**: tujingxuan1994 at gmail dot com</span><br/>

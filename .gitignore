@@ -22,3 +22,6 @@ pnpm-debug.log*
 # editors
 .idea/
 .vscode/
+
+# local-only dev backlog — never push to GitHub
+BACKLOG.md

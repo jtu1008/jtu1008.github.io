@@ -1,0 +1,132 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import BookCard from '../components/BookCard.astro';
+import { books, type Book } from '../data/books';
+
+// 'YYYY-MM' → sortable quarter key 'YYYY-Q#'; and a display label 'Q# YYYY'.
+function quarterKey(ym: string): string {
+  const [y, m] = ym.split('-').map(Number);
+  return `${y}-Q${Math.floor((m - 1) / 3) + 1}`;
+}
+function formatQuarter(key: string): string {
+  const [y, q] = key.split('-Q');
+  return `Q${q} ${y}`;
+}
+
+const currentlyReading = books.filter((b) => b.status === 'reading');
+const upNext = books.filter((b) => b.status === 'queued');
+
+// Group finished books by quarter, newest quarter first.
+const byQuarter = new Map<string, Book[]>();
+for (const b of books) {
+  if (b.status === 'read' && b.date) {
+    const key = quarterKey(b.date);
+    if (!byQuarter.has(key)) byQuarter.set(key, []);
+    byQuarter.get(key)!.push(b);
+  }
+}
+const quarters = [...byQuarter.keys()].sort().reverse();
+const totalLogged = [...byQuarter.values()].reduce((n, list) => n + list.length, 0);
+---
+
+<PageLayout title="Reading" description="A quarterly log of books I'm reading.">
+  <p class="reading__intro">
+    I've kept this log since <strong>November 2025</strong> — a curated shelf across
+    fiction, psychology, society, and ideas.
+  </p>
+
+  {
+    currentlyReading.length > 0 && (
+      <section class="shelf">
+        <h2 class="shelf__heading">Currently reading</h2>
+        <div class="bookgrid">
+          {currentlyReading.map((b) => (
+            <BookCard book={b} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    quarters.map((q) => (
+      <section class="shelf">
+        <h2 class="shelf__heading">
+          {formatQuarter(q)}
+          <span class="shelf__count">{byQuarter.get(q)!.length}</span>
+        </h2>
+        <div class="bookgrid">
+          {byQuarter.get(q)!.map((b) => (
+            <BookCard book={b} />
+          ))}
+        </div>
+      </section>
+    ))
+  }
+
+  {
+    upNext.length > 0 && (
+      <section class="shelf">
+        <h2 class="shelf__heading shelf__heading--muted">Up next</h2>
+        <div class="bookgrid">
+          {upNext.map((b) => (
+            <BookCard book={b} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <p class="reading__footnote">{totalLogged} books logged so far.</p>
+</PageLayout>
+
+<style>
+  .reading__intro {
+    color: var(--color-mm-muted);
+    margin: 0 0 2.25rem;
+    max-width: 62ch;
+  }
+  .reading__intro strong {
+    color: var(--color-mm-text);
+    font-weight: 600;
+  }
+
+  .shelf {
+    margin: 0 0 2.75rem;
+  }
+  .shelf__heading {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.1rem;
+    font-weight: 650;
+    color: var(--color-ink);
+    margin: 0 0 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-mm-border);
+  }
+  .shelf__heading--muted {
+    color: var(--color-mm-muted);
+  }
+  .shelf__count {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-mm-muted);
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-mm-border);
+  }
+
+  .bookgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.75rem 1.25rem;
+  }
+
+  .reading__footnote {
+    margin-top: 2.5rem;
+    font-size: 0.8rem;
+    color: var(--color-mm-muted);
+  }
+</style>

@@ -1,19 +1,46 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
 @plugin '@tailwindcss/typography';
 
 /* ------------------------------------------------------------------ *
- * Theme tokens — approximating the minimal-mistakes "default" skin.
+ * Design tokens — "modern minimal academic".
+ * Neutral zinc palette + one restrained blue accent; Inter throughout.
  * ------------------------------------------------------------------ */
 @theme {
-  --color-mm-link: #52adc8;
-  --color-mm-link-hover: #2f6f86;
-  --color-mm-text: #494e52;
-  --color-mm-muted: #898c8f;
-  --color-mm-border: #f2f3f3;
+  --color-ink: #18181b; /* headings / strongest text */
+  --color-mm-text: #3f3f46; /* body */
+  --color-mm-muted: #71717a; /* secondary / captions */
+  --color-mm-border: #e8e8ec; /* hairlines, dividers */
+  --color-mm-border-strong: #d4d4d8;
+  --color-mm-link: #2563eb; /* accent */
+  --color-mm-link-hover: #1d4ed8;
   --color-mm-masthead: #ffffff;
+  --color-bg: #ffffff;
+  --color-bg-subtle: #fafafa;
 
-  --font-sans: 'Helvetica Neue', Helvetica, Arial, -apple-system,
-    'Segoe UI', Roboto, sans-serif;
+  --font-sans:
+    'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* Dark theme — `.dark` class is toggled on <html> by the no-flash script in
+ * BaseHead and the toggle button in the masthead. Only token values change. */
+html.dark {
+  color-scheme: dark;
+  --color-ink: #f4f4f5;
+  --color-mm-text: #d4d4d8;
+  --color-mm-muted: #a1a1aa;
+  --color-mm-border: #27272a;
+  --color-mm-border-strong: #3f3f46;
+  --color-mm-link: #60a5fa;
+  --color-mm-link-hover: #93c5fd;
+  --color-mm-masthead: #0f0f11;
+  --color-bg: #0d0d0f;
+  --color-bg-subtle: #18181b;
 }
 
 /* ------------------------------------------------------------------ *
@@ -22,64 +49,103 @@
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  /* Always reserve the scrollbar gutter so centered layout doesn't shift
+     horizontally between short pages (no scrollbar) and tall pages. */
+  scrollbar-gutter: stable;
+  overflow-y: scroll;
 }
 
 body {
   font-family: var(--font-sans);
   color: var(--color-mm-text);
-  background: #fff;
-  line-height: 1.5;
+  background: var(--color-bg);
+  line-height: 1.65;
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-ink);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 a {
   color: var(--color-mm-link);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 a:hover {
   color: var(--color-mm-link-hover);
-  text-decoration: underline;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-mm-link) 18%, transparent);
 }
 
 /* ------------------------------------------------------------------ *
- * Markdown content — tuned `prose` for the academic page body.
- * The old pages use inline <span style="font-size:..."> which we keep.
+ * Page content (Markdown body). Keeps the inline <span> sizing the
+ * academic pages rely on, but with a comfortable reading measure.
  * ------------------------------------------------------------------ */
 .page-content {
-  max-width: none;
+  max-width: 72ch;
   color: var(--color-mm-text);
+  font-size: 1.02rem;
+}
+.page-content p {
+  margin: 0 0 1.1rem;
 }
 .page-content :where(h1, h2, h3, h4) {
-  color: #3a3e42;
-  font-weight: 700;
+  margin: 2rem 0 0.75rem;
 }
 .page-content hr {
   border: 0;
   border-top: 1px solid var(--color-mm-border);
-  margin: 1.25rem 0;
+  margin: 1.5rem 0;
 }
 .page-content a {
   color: var(--color-mm-link);
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.page-content a:hover {
+  text-decoration: underline;
+}
+.page-content strong {
+  color: var(--color-ink);
+  font-weight: 650;
 }
 .page-content img {
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
-/* The big love-letter button (ported from minimal-mistakes .btn--x-large) */
+/* Buttons (kept from the original love-letter button, restyled) */
 .btn {
   display: inline-block;
-  padding: 0.75em 1.5em;
-  font-weight: 700;
+  padding: 0.7em 1.4em;
+  font-weight: 600;
   color: #fff !important;
   background-color: var(--color-mm-link);
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  border-radius: 8px;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
 }
 .btn:hover {
   background-color: var(--color-mm-link-hover);
-  text-decoration: none;
+  transform: translateY(-1px);
 }
 .btn--x-large {
-  font-size: 1.5em;
-  padding: 1em 2em;
+  font-size: 1.4em;
+  padding: 0.9em 1.8em;
 }
