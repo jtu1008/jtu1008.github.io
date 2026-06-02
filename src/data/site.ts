@@ -16,8 +16,9 @@ export interface SocialLink {
 export const site = {
   title: 'Jingxuan Tu',
   titleSeparator: '-',
-  description: "Jingxuan Tu's personal web page",
-  url: 'https://jtu1008.github.io',
+  description:
+    'Jingxuan Tu — Applied Scientist at CodaMetrix building LLM and agentic systems for medical coding; Ph.D. in Computational Linguistics from Brandeis.',
+  url: 'https://jingxuantu.com',
   locale: 'en-US',
 };
 
