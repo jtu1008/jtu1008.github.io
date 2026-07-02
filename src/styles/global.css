@@ -102,6 +102,9 @@ a:hover {
   color: var(--color-mm-text);
   font-size: 1.02rem;
 }
+.page-content--wide {
+  max-width: 100%;
+}
 .page-content p {
   margin: 0 0 1.1rem;
 }
@@ -127,6 +130,85 @@ a:hover {
 }
 .page-content img {
   border-radius: 8px;
+}
+.page-content ul,
+.page-content ol {
+  margin: 0 0 1.1rem;
+  padding-left: 1.4rem;
+}
+.page-content li {
+  margin: 0.3rem 0;
+}
+.page-content blockquote {
+  margin: 1.5rem 0;
+  padding: 0.6rem 1.1rem;
+  border-left: 3px solid var(--color-mm-link);
+  background: var(--color-bg-subtle);
+  border-radius: 0 6px 6px 0;
+}
+.page-content blockquote p {
+  margin: 0.35rem 0;
+}
+.page-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-mm-border);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+.page-content pre:not(.mermaid) {
+  margin: 1.25rem 0;
+  padding: 1rem 1.1rem;
+  border-radius: 8px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-mm-border);
+  overflow-x: auto;
+}
+.page-content pre:not(.mermaid) code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+.page-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.92rem;
+}
+.page-content th,
+.page-content td {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--color-mm-border);
+  vertical-align: top;
+}
+.page-content thead th {
+  color: var(--color-ink);
+  font-weight: 650;
+  border-bottom: 2px solid var(--color-mm-border-strong);
+}
+
+/* Blog "wide" mode: a 3-column grid centers the reading column, and media
+   (diagrams, tables, hero images) spans the full width — reliably centered via
+   `justify-self` (no margin/transform tricks that other rules can override). */
+@media (min-width: 64rem) {
+  .page-content--wide {
+    display: grid;
+    grid-template-columns: 1fr min(680px, 100%) 1fr;
+  }
+  .page-content--wide > * {
+    grid-column: 2;
+  }
+  .page-content--wide > figure.mermaid-figure,
+  .page-content--wide > table,
+  .page-content--wide > img {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(960px, 100%);
+    max-width: none;
+  }
 }
 
 /* Buttons (kept from the original love-letter button, restyled) */

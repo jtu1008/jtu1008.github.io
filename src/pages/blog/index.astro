@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+// Show drafts while developing (so you can find them) but hide them in production.
+const posts = (
+  await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)
+).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<PageLayout
+  title="Blog"
+  description="Notes and explainers on AI, NLP, and what I'm learning."
+  full
+  wide
+>
+  <p class="blog-intro">
+    Notes, explainers, and learning notes on AI and NLP — including a series on AI for
+    medical coding.
+  </p>
+
+  {
+    posts.length === 0 ? (
+      <p class="blog-empty">No posts yet — check back soon.</p>
+    ) : (
+      <ul class="post-list">
+        {posts.map((post) => (
+          <li class="post-item">
+            <a class="post-link" href={`/blog/${post.id}/`}>
+              <h2 class="post-title">{post.data.title}</h2>
+              <p class="post-meta">
+                <FormattedDate date={post.data.pubDate} />
+                {post.data.tags.length > 0 && <span> · {post.data.tags.join(', ')}</span>}
+                {post.data.draft && <span class="index-draft">Draft</span>}
+              </p>
+              <p class="post-desc">{post.data.description}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</PageLayout>
+
+<style>
+  .blog-intro {
+    color: var(--color-mm-muted);
+    margin: 0 0 2rem;
+  }
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .post-item {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--color-mm-border);
+  }
+  .post-item:last-child {
+    border-bottom: 1px solid var(--color-mm-border);
+  }
+  .post-link {
+    display: block;
+    color: inherit;
+  }
+  .post-link:hover {
+    text-decoration: none;
+  }
+  .post-title {
+    font-size: 1.3rem;
+    font-weight: 650;
+    color: var(--color-ink);
+    margin: 0 0 0.3rem;
+    transition: color 0.15s ease;
+  }
+  .post-link:hover .post-title {
+    color: var(--color-mm-link);
+  }
+  .post-meta {
+    font-size: 0.82rem;
+    color: var(--color-mm-muted);
+    margin: 0 0 0.5rem;
+  }
+  .post-desc {
+    color: var(--color-mm-text);
+    margin: 0;
+  }
+  .index-draft {
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: 4px;
+    background: #fdf2dc;
+    color: #8a5a00;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+</style>

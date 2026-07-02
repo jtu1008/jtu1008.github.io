@@ -1,0 +1,222 @@
+---
+title: 'Medical Coding from Scratch (Part 1): How a Visit Becomes Data — and a Bill'
+description: 'A plain-language intro to medical coding: what it is, who does it, and how a clinical encounter moves through the US healthcare system. A learning note from an AI scientist.'
+pubDate: 2026-06-03
+tags: ['medical coding', 'healthcare', 'learning notes']
+draft: true
+---
+
+import Mermaid from '../../components/Mermaid.astro';
+import Callout from '../../components/Callout.astro';
+
+When I started building AI systems for **medical coding**, I quickly hit an awkward truth:
+I couldn't reason about the AI until I understood the thing the AI was supposed to do. So
+I went and learned the basics — and this is my attempt to explain them the way I wish
+someone had explained them to me.
+
+This is Part 1: what medical coding is, who does it, and how a single doctor's visit turns
+into structured data and a bill. No AI yet — that's Part 2. Think of this as the map before
+the territory.
+
+{/* Image suggestion: a friendly hero image — a stethoscope + a barcode, or a Boston hospital exterior. */}
+
+## What medical coding actually is
+
+Every time you see a clinician, they write things down: your symptoms, what they think is
+going on, what they did about it. That note is great for a human, but terrible for a
+**computer** — "bad ankle sprain, wrapped it, told them to rest" can't be counted,
+compared, or paid against a rulebook.
+
+Medical coding is the step that turns that messy free text into **standardized codes**: one
+set for *what was wrong* (diagnoses) and another for *what was done* (services and
+procedures). Once the encounter is in codes, the same visit can flow through billing,
+insurance review, quality reporting, and public-health statistics without anyone re-reading
+the chart.
+
+The analogy that finally made it click for me, as someone who builds software: **coding
+turns a messy chart into a structured API request.** The clinician's note is unstructured
+real-world data; the codes are the typed, validated payload that the payer's system can
+actually evaluate against its rules. (If you prefer a non-engineer version: codes are the
+**shipping labels** that let a package move through every sorting and tracking system
+without anyone opening the box.)
+
+## The code systems (the cast of characters)
+
+There are a few code sets, and the easiest way to keep them straight is by the *question*
+each one answers:
+
+| Code set | Answers… | Maintained by | Rough size |
+|---|---|---|---|
+| **ICD-10-CM** | "What's the diagnosis?" | CDC / NCHS (US version of the WHO's ICD) | ~70,000 codes |
+| **CPT** | "What service/procedure was done?" | American Medical Association (AMA) | ~10,000–11,000 codes |
+| **HCPCS Level II** | "What supply/item/service *isn't* in CPT?" (e.g., ambulance, equipment) | CMS | Several thousand codes + modifiers |
+
+Two more terms you'll hear, one level up: **DRGs** (Diagnosis-Related Groups) bundle a
+hospital inpatient stay into a single payment category instead of paying line-by-line, and
+**HCCs** (Hierarchical Condition Categories) group diagnoses to *predict expected cost* for
+risk adjustment.
+
+<Callout type="warning" title="">
+
+There isn't just *one* HCC model — Medicare Advantage and the ACA marketplace use different
+ones — so it's safer to say "HCCs are diagnosis groupings used to predict cost" than to talk
+about "the" HCC system.
+
+</Callout>
+
+If you like the engineering framing: ICD/CPT/HCPCS are the detailed **source files**, and
+DRGs/HCCs are **compression layers** that roll those details up into payment or risk buckets.
+
+## Who actually does the coding
+
+Coding sits in a part of the hospital called the **revenue cycle** — the business machinery
+that turns care into collected payment. A few roles matter:
+
+- **Medical coders** read the documentation and assign the codes. Crucial boundary: the
+  [clinician is legally accountable for *establishing the diagnosis*](https://stacks.cdc.gov/view/cdc/250974);
+  the coder works from what's documented. Garbage in, garbage out.
+- **Clinical Documentation Improvement (CDI)** specialists work *upstream*, nudging
+  clinicians to document with enough specificity that the codes (and the bill) hold up.
+- **Revenue-cycle staff** handle everything downstream: claim edits, submission, payment
+  posting, denials, and appeals.
+
+Coding is a credentialed profession, too (the AAPC's **CPC**, AHIMA's **CCA / CCS**, and
+others) — part of why "just have an LLM do it" is a bigger claim than it sounds
+(foreshadowing Part 2).
+
+## The journey of a claim
+
+Here's the path I keep coming back to — a doctor's visit becoming a paid (or denied) claim:
+
+<Mermaid
+  chart={`flowchart LR
+  A(["🧑‍⚕️ Patient visit"]) --> B(["📝 Documentation"])
+  B --> C(["🏷️ Medical coding"])
+  C --> D(["📨 Claim submitted"])
+  D --> E{"⚖️ Payer adjudication"}
+  E -->|Approved| F(["✅ Reimbursement"])
+  E -->|Denied| G(["↩️ Appeal"])
+  G -.-> E
+  classDef step fill:#eef4ff,stroke:#3b82f6,stroke-width:1.5px,color:#1e3a5f;
+  classDef ok fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d;
+  classDef no fill:#fee2e2,stroke:#dc2626,stroke-width:1.5px,color:#7f1d1d;
+  class A,B,C,D step
+  class F ok
+  class G no`}
+  caption="How a clinical encounter becomes a paid — or denied — claim."
+/>
+
+A few definitions that tripped me up at first:
+
+- A **claim** is the request for payment your provider sends the insurer after covered care.
+- The **payer** is whoever's responsible for paying — a private insurer, or a government
+  program like Medicare or Medicaid.
+- **Adjudication** is the payer's review-and-decide process.
+- An **EOB** (Explanation of Benefits) is the notice *you* get showing what the plan paid
+  and what you may owe. Counterintuitively, an **EOB is not a bill** — it just explains the
+  decision.
+- A **denial** means the payer won't pay some or all of the claim, and you generally have a
+  right to appeal (for marketplace plans, an internal appeal is typically due
+  [within **180 days**](https://www.healthcare.gov/appeal-insurance-company-decision/appeals/),
+  with external review after that).
+
+## A worked example
+
+Let me make it concrete with the example CMS itself uses for teaching.
+
+<Callout type="example" title="Worked example: a sprained ankle">
+
+**Scenario:** an established patient twists their **right ankle**, comes into a clinic, is
+examined, and is diagnosed with a sprain (not a fracture).
+
+- **Diagnosis code:** [`S93.401A`](https://www.icd10data.com/ICD10CM/Codes/S00-T88/S90-S99/S93-/S93.401A)
+  — "Right ankle sprain, **initial encounter**." That last `A` is a 7th character meaning
+  the patient is in *active treatment* (not follow-up). The code also encodes **laterality**
+  (right vs. left).
+- **Service code:** [`CPT 99213`](https://www.ama-assn.org/practice-management/cpt/cpt-code-99213-established-patient-office-visit-20-29-minutes)
+  — a common established-patient office visit with low-complexity decision-making (**~20–29
+  minutes**); the AMA's own description even lists "**an acute uncomplicated injury**" as a typical
+  case.
+
+The provider ties the diagnosis to the service on the claim, the payer adjudicates, and your
+share depends on plan rules (deductible, copay, network, allowed amount).
+
+</Callout>
+
+What surprised me is how much the *exact* code depends on documentation: a different side, a
+specific torn ligament, a follow-up visit instead of the first one, or added imaging would
+each change a code. "Code to the highest specificity the record supports" is a real rule —
+and a big reason this is harder than it looks.
+
+{/* Image suggestion: a simple before/after — a handwritten note snippet on the left, the two codes on the right. */}
+
+## Why it matters (and why it's genuinely hard)
+
+Coding is one of the control points where US healthcare converts care into **money, data,
+and accountability**. The stakes are large:
+
+- US national health spending hit about [**$5.3 trillion in 2024**](https://www.cms.gov/data-research/statistics-trends-and-reports/national-health-expenditure-data/nhe-fact-sheet),
+  with physician and clinical services around **$1.1 trillion**. Coding decisions operate
+  inside *that*.
+- **Administrative costs** were about [**7.0% of national health spending in 2024**](https://www.healthsystemtracker.org/chart-collection/u-s-spending-healthcare-changed-time/)
+  — and note that figure *excludes provider-side* admin, so the real burden of
+  billing/coding/claims is almost certainly higher. For comparison, the US spent roughly
+  [**$925 per person** on health administration in 2021](https://www.healthsystemtracker.org/brief/what-drives-health-spending-in-the-u-s-compared-to-other-countries/)
+  vs. **~$245** in comparable countries.
+- **Denials are common but the numbers are segment-specific.** In 2024, HealthCare.gov
+  marketplace insurers denied about [**19% of in-network claims**](https://www.kff.org/patient-consumer-protections/claims-denials-and-appeals-in-aca-marketplace-plans-in-2024/)
+  (~20% of all claims), and fewer than **1%** of denials were appealed.
+- **Coding errors are a major compliance risk.** CMS found incorrect coding drove about
+  [**49%** of improper payments for evaluation-and-management codes](https://www.cms.gov/training-education/medicare-learning-networkr-mln/compliance/medicare-provider-compliance-tips/evaluation-management-services)
+  in a recent period, and estimated the overall Medicare fee-for-service improper-payment
+  rate at **6.55%** (~$28.8B) for FY2025. 
+- [**Upcoding**](https://oig.hhs.gov/compliance/physician-education/i-physician-relationships-with-payers/)
+  — billing for something more severe or expensive than was provided — can cross into fraud,
+  though a lot of "improper payments" are really just *insufficient documentation*, which
+  isn't the same as fraud. That distinction matters.
+
+So a "good code" quietly does a lot of work, and a "bad code" can mean a wrong payment, a
+denial, a compliance problem, or bad downstream data. That's the gap AI is being asked to
+help with.
+
+## A quick Boston detour
+
+Since I'm in Boston, a few Massachusetts specifics make this concrete: the state runs its
+own marketplace (the [**Massachusetts Health Connector**](https://www.mass.gov/connector)),
+still has an individual coverage mandate, calls its Medicaid program
+[**MassHealth**](https://www.mass.gov/topics/masshealth), and offers an external-appeal path
+through the state's [**Office of Patient Protection**](https://www.mass.gov/request-an-external-review-of-a-health-insurance-decision).
+Massachusetts even maintains an [**All-Payer Claims Database**](https://www.mass.gov/chia) —
+a reminder that all those codes become a public dataset used to study the whole system, not
+just to pay one bill.
+
+## Coming up in Part 2
+
+Now that we can see the machine — the codes, the people, the claim flow, and the stakes —
+the obvious question is: *where can AI actually help, and where does it break?* That's Part 2.
+
+---
+
+<Callout type="note" title="A note">
+
+This is a learning note, not professional, medical, billing, or legal advice, and the views
+here are my own. I used AI tools to help research and draft it, then checked the claims
+against the primary sources linked above — but if I got something wrong, I'd genuinely like
+to know.
+
+</Callout>
+
+### Further reading
+
+The primary sources behind the claims above, grouped by topic:
+
+- **Code sets** — ICD-10-CM ([CDC/NCHS](https://www.cdc.gov/nchs/icd/icd-10-cm/index.html), [coding guidelines](https://stacks.cdc.gov/view/cdc/250974)); CPT ([AMA](https://www.ama-assn.org/practice-management/cpt), [99213](https://www.ama-assn.org/practice-management/cpt/cpt-code-99213-established-patient-office-visit-20-29-minutes)); HCPCS ([overview](https://www.cms.gov/medicare/coding-billing/healthcare-common-procedure-system), [Level II process](https://www.cms.gov/medicare/coding-billing/healthcare-common-procedure-system/level-ii-coding-process), [quarterly updates](https://www.cms.gov/medicare/coding-billing/healthcare-common-procedure-system/quarterly-update)); [ICD-10 basics training slides (CMS)](https://www.cms.gov/outreach-and-education/outreach/npc/downloads/slides-from-the-011414-icd10-basics-video.pdf); [code-set maintenance (AHIMA)](https://www.ahima.org/advocacy/focus-areas/topics/medical-code-sets/development-and-maintenance/)
+- **Grouping & risk** — [DRG design (CMS)](https://www.cms.gov/icd10m/fy2025-version42.0-fullcode-cms/fullcode_cms/Design_and_Development_of_the_Diagnosis_Related_Group_%28DRGs%29.pdf); [Medicare risk adjustment / HCCs (CMS)](https://www.cms.gov/medicare/payment/medicare-advantage-rates-statistics/risk-adjustment)
+- **Who codes** — AAPC: [revenue cycle](https://www.aapc.com/resources/what-is-revenue-cycle-management), [clinical documentation](https://www.aapc.com/resources/what-is-clinical-documentation), [CPC](https://www.aapc.com/certifications/cpc)
+- **The claim journey** — Healthcare.gov: [claim](https://www.healthcare.gov/glossary/claim/), [appeals](https://www.healthcare.gov/appeal-insurance-company-decision/appeals/); CMS: [claims processing manual / CMS-1500](https://www.cms.gov/regulations-and-guidance/guidance/manuals/downloads/clm104c26.pdf), [remittance advice](https://www.cms.gov/medicare/coding-billing/electronic-billing/health-care-payment-remittance-advice), [how to read your bill / EOB](https://www.cms.gov/medical-bill-rights/help/guides/how-to-read-bill), [adjudication (BCDA)](https://bcda.cms.gov/bcda-data/partially-adjudicated-claims-data.html)
+- **Cost, denials & compliance** — Peterson-KFF: [spending over time](https://www.healthsystemtracker.org/chart-collection/u-s-spending-healthcare-changed-time/), [drivers vs. other countries](https://www.healthsystemtracker.org/brief/what-drives-health-spending-in-the-u-s-compared-to-other-countries/); [KFF marketplace denials, 2024](https://www.kff.org/patient-consumer-protections/claims-denials-and-appeals-in-aca-marketplace-plans-in-2024/); [CMS national health expenditures](https://www.cms.gov/data-research/statistics-trends-and-reports/national-health-expenditure-data/nhe-fact-sheet); [CMS E/M compliance](https://www.cms.gov/training-education/medicare-learning-networkr-mln/compliance/medicare-provider-compliance-tips/evaluation-management-services); [CMS CERT](https://www.cms.gov/data-research/monitoring-programs/improper-payment-measurement-programs/comprehensive-error-rate-testing-cert); [HHS OIG on upcoding](https://oig.hhs.gov/compliance/physician-education/i-physician-relationships-with-payers/)
+- **Massachusetts** — [Health Connector](https://www.mass.gov/connector), [individual mandate](https://www.mass.gov/info-details/health-care-reform-for-individuals), [MassHealth](https://www.mass.gov/topics/masshealth), [external review](https://www.mass.gov/request-an-external-review-of-a-health-insurance-decision), [No Surprises Act FAQ](https://www.mass.gov/doc/no-surprises-act-faq/download), [CHIA — APCD](https://www.mass.gov/chia)
+
+{/* TODO before publishing: (1) spot-check the exact ankle code, the HCPCS/DRG counts, and
+    the denial-statistic framing against the primary sources; (2) add the two suggested
+    images. */}

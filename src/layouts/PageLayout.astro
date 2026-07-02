@@ -12,11 +12,13 @@ interface FrontmatterProps {
   full?: boolean;
   /** Add noindex/nofollow (e.g. the private love-jin page). */
   noindex?: boolean;
+  /** Centered reading column with wide media break-out (used by the blog). */
+  wide?: boolean;
 }
 
 // Markdown pages pass values under `frontmatter`; .astro pages may pass directly.
 const fm: FrontmatterProps = Astro.props.frontmatter ?? Astro.props;
-const { title, description, full = false, noindex = false } = fm;
+const { title, description, full = false, noindex = false, wide = false } = fm;
 ---
 
 <!doctype html>
@@ -36,9 +38,9 @@ const { title, description, full = false, noindex = false } = fm;
             </div>
           )
         }
-        <article class="layout__content">
+        <article class:list={['layout__content', { 'layout__content--wide': wide }]}>
           {title && <h1 class="page-title">{title}</h1>}
-          <div class="page-content">
+          <div class:list={['page-content', { 'page-content--wide': wide }]}>
             <slot />
           </div>
         </article>
@@ -74,6 +76,11 @@ const { title, description, full = false, noindex = false } = fm;
         }
         .layout__inner--full {
           grid-template-columns: minmax(0, 1fr);
+        }
+        /* Blog: center the title to match the grid's reading column (see global.css). */
+        .layout__content--wide .page-title {
+          max-width: 680px;
+          margin-inline: auto;
         }
       }
     </style>

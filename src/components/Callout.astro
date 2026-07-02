@@ -1,0 +1,64 @@
+---
+// Usage in MDX (note the blank lines so the body is parsed as Markdown):
+//   <Callout type="example" title="Worked example">
+//
+//   **Scenario:** ...
+//
+//   </Callout>
+type CalloutType = 'note' | 'tip' | 'info' | 'warning' | 'example';
+
+interface Props {
+  type?: CalloutType;
+  title?: string;
+}
+
+const TYPES: Record<CalloutType, { icon: string; accent: string; label: string }> = {
+  note: { icon: '📝', accent: '#6b7280', label: 'Note' },
+  tip: { icon: '💡', accent: '#2563eb', label: 'Tip' },
+  info: { icon: 'ℹ️', accent: '#2563eb', label: 'Info' },
+  warning: { icon: '⚠️', accent: '#d97706', label: 'Heads up' },
+  example: { icon: '📋', accent: '#16a34a', label: 'Example' },
+};
+
+const { type = 'note', title } = Astro.props;
+const t = TYPES[type] ?? TYPES.note;
+const heading = title ?? t.label;
+---
+
+<aside class="callout" style={`--cl-accent: ${t.accent};`}>
+  <p class="callout__head">
+    <span class="callout__icon" aria-hidden="true">{t.icon}</span>
+    <span>{heading}</span>
+  </p>
+  <div class="callout__body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    border-left: 3px solid var(--cl-accent);
+    background: color-mix(in srgb, var(--cl-accent) 7%, var(--color-bg));
+    border-radius: 0 8px 8px 0;
+    padding: 0.9rem 1.15rem;
+    margin: 1.75rem 0;
+  }
+  .callout__head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.4rem;
+    font-weight: 650;
+    font-size: 0.92rem;
+    color: var(--cl-accent);
+  }
+  .callout__icon {
+    font-size: 1rem;
+    line-height: 1;
+  }
+  /* Tidy spacing of the markdown body inside the box. */
+  .callout__body > :global(:first-child) {
+    margin-top: 0;
+  }
+  .callout__body > :global(:last-child) {
+    margin-bottom: 0;
+  }
+</style>

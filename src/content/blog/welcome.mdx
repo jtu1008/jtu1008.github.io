@@ -1,0 +1,47 @@
+---
+title: 'Welcome — and what this blog is for'
+description: 'A quick hello, and a demo of the building blocks I use here: prose, images, callouts, and diagrams.'
+pubDate: 2026-06-02
+tags: ['meta']
+draft: true
+---
+
+import Mermaid from '../../components/Mermaid.astro';
+
+Hi — I'm Jingxuan. I build LLM and agentic systems for medical coding at CodaMetrix, and I
+did my Ph.D. in computational linguistics before that. This is where I'll write **learning
+notes** — plain-language explainers on AI, NLP, and the things I'm figuring out as I go.
+
+First up: a short series on **medical coding and how AI fits into it**, written from the
+perspective of someone learning the domain themselves.
+
+## What you can expect
+
+Posts here aim to be approachable and concrete — lots of examples, the occasional diagram,
+and a clear takeaway. As a quick demo, here's the kind of flowchart I'll use to explain how
+a doctor's visit becomes a bill:
+
+<Mermaid
+  chart={`flowchart LR
+  A(["🧑‍⚕️ Patient visit"]) --> B(["📝 Documentation"])
+  B --> C(["🏷️ Medical coding"])
+  C --> D(["📨 Claim submitted"])
+  D --> E{"⚖️ Payer adjudication"}
+  E -->|Approved| F(["✅ Reimbursement"])
+  E -->|Denied| G(["↩️ Appeal"])
+  G -.-> E
+  classDef step fill:#eef4ff,stroke:#3b82f6,stroke-width:1.5px,color:#1e3a5f;
+  classDef ok fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d;
+  classDef no fill:#fee2e2,stroke:#dc2626,stroke-width:1.5px,color:#7f1d1d;
+  class A,B,C,D step
+  class F ok
+  class G no`}
+  caption="The journey of a claim — the kind of diagram I'll use to explain the domain."
+/>
+
+> **Note:** these are learning notes, not professional, medical, or coding advice — and
+> the views here are my own.
+
+## How to follow along
+
+New posts show up here and in the [RSS feed](/rss.xml). Thanks for reading — more soon.

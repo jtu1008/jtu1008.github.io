@@ -1,0 +1,109 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import PageLayout from '../../layouts/PageLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  // Drafts are previewable in `astro dev` but never built/exposed in production
+  // (so they stay out of the sitemap and off search engines entirely).
+  const visible = import.meta.env.PROD ? posts.filter((p) => !p.data.draft) : posts;
+  return visible.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const words = (post.body ?? '').trim().split(/\s+/).filter(Boolean).length;
+const readingTime = Math.max(1, Math.round(words / 200));
+---
+
+<PageLayout
+  title={post.data.title}
+  description={post.data.description}
+  full
+  wide
+  noindex={post.data.draft}
+>
+  <p class="post-meta">
+    <FormattedDate date={post.data.pubDate} />
+    {
+      post.data.updatedDate && (
+        <span>
+          {' '}· updated <FormattedDate date={post.data.updatedDate} />
+        </span>
+      )
+    }
+    {' '}· {readingTime} min read
+    {post.data.draft && <span class="post-draft">Draft</span>}
+  </p>
+
+  {
+    post.data.heroImage && (
+      <Image
+        class="post-hero"
+        src={post.data.heroImage}
+        alt={post.data.title}
+        widths={[480, 800, 1200]}
+        sizes="(max-width: 800px) 100vw, 800px"
+      />
+    )
+  }
+
+  <Content />
+
+  <p class="post-back"><a href="/blog/">← All posts</a></p>
+</PageLayout>
+
+<!-- Render any Mermaid diagrams on this page (theme follows light/dark). -->
+<script>
+  import mermaid from 'mermaid';
+  const dark = document.documentElement.classList.contains('dark');
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'strict',
+    theme: 'base',
+    themeVariables: {
+      fontFamily: "'Inter Variable', Inter, system-ui, sans-serif",
+      fontSize: '15px',
+      primaryColor: dark ? '#1e293b' : '#eef4ff',
+      primaryBorderColor: '#3b82f6',
+      primaryTextColor: dark ? '#e2e8f0' : '#1e3a5f',
+      lineColor: dark ? '#64748b' : '#9aa7b8',
+    },
+    flowchart: { curve: 'basis', nodeSpacing: 45, rankSpacing: 60, padding: 14 },
+  });
+  const nodes = document.querySelectorAll('pre.mermaid');
+  if (nodes.length) mermaid.run({ nodes: Array.from(nodes) });
+</script>
+
+<style>
+  .post-meta {
+    font-size: 0.85rem;
+    color: var(--color-mm-muted);
+    margin: 0 0 1.5rem;
+  }
+  .post-draft {
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 4px;
+    background: #fdf2dc;
+    color: #8a5a00;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .post-hero {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin: 0 0 1.75rem;
+  }
+  .post-back {
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-mm-border);
+    font-size: 0.9rem;
+  }
+</style>

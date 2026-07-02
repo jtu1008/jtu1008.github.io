@@ -38,6 +38,7 @@ export const nav: NavLink[] = [
   { title: 'Publications', url: '/pub/' },
   { title: 'Service', url: '/service/' },
   { title: 'Reading', url: '/reading/' },
+  // { title: 'Blog', url: '/blog/' }, // re-enable when the blog is ready to launch
 ];
 
 // Sidebar profile links. Email is always shown; add more as desired.

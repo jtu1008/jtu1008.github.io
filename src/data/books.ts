@@ -26,12 +26,6 @@ export interface Book {
 export const books: Book[] = [
   // ── Currently reading ───────────────────────────────────────────────
   {
-    title: 'Anxious People', // 焦虑的人 — Swedish original
-    author: 'Fredrik Backman',
-    cover: '/assets/books/anxious-people.jpg',
-    status: 'reading',
-  },
-  {
     title: 'Misogyny', // 厌女 — Japanese original (Japanese-edition cover)
     author: 'Chizuko Ueno',
     cover: '/assets/books/misogyny.jpg',
@@ -39,6 +33,13 @@ export const books: Book[] = [
   },
 
   // ── Q2 2026 ─────────────────────────────────────────────────────────
+  {
+    title: 'Anxious People', // 焦虑的人 — Swedish original
+    author: 'Fredrik Backman',
+    cover: '/assets/books/anxious-people.jpg',
+    status: 'read',
+    date: '2026-06',
+  },
   {
     title: 'Attached: The New Science of Adult Attachment', // 亲密关系与情感依赖 — English original
     author: 'Amir Levine & Rachel S. F. Heller',
