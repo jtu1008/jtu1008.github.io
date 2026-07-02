@@ -26,10 +26,25 @@ export interface Book {
 export const books: Book[] = [
   // ── Currently reading ───────────────────────────────────────────────
   {
+    title: 'Being Mortal', // Medicine and What Matters in the End — English original
+    author: 'Atul Gawande',
+    cover: '/assets/books/being-mortal.jpg',
+    status: 'reading',
+  },
+  {
+    title: 'Steve Jobs', // English original
+    author: 'Walter Isaacson',
+    cover: '/assets/books/steve-jobs.jpg',
+    status: 'reading',
+  },
+
+  // ── Q3 2026 ─────────────────────────────────────────────────────────
+  {
     title: 'Misogyny', // 厌女 — Japanese original (Japanese-edition cover)
     author: 'Chizuko Ueno',
     cover: '/assets/books/misogyny.jpg',
-    status: 'reading',
+    status: 'read',
+    date: '2026-07',
   },
 
   // ── Q2 2026 ─────────────────────────────────────────────────────────
