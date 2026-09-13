@@ -26,19 +26,35 @@ export interface Book {
 export const books: Book[] = [
   // ── Currently reading ───────────────────────────────────────────────
   {
+    title: '三体', // Chinese original
+    titleAlt: 'The Three-Body Problem',
+    author: 'Liu Cixin (刘慈欣)',
+    cover: '/assets/books/three-body-problem.jpg', // Tor English edition (Ken Liu trans.)
+    status: 'reading',
+  },
+  {
+    title: '呐喊', // Chinese original (short-story collection)
+    titleAlt: 'Call to Arms',
+    author: 'Lu Xun (鲁迅)',
+    cover: '/assets/books/call-to-arms.jpg', // Foreign Languages Press bilingual edition
+    status: 'reading',
+  },
+
+  // ── Q3 2026 ─────────────────────────────────────────────────────────
+  {
     title: 'Being Mortal', // Medicine and What Matters in the End — English original
     author: 'Atul Gawande',
     cover: '/assets/books/being-mortal.jpg',
-    status: 'reading',
+    status: 'read',
+    date: '2026-09',
   },
   {
     title: 'Steve Jobs', // English original
     author: 'Walter Isaacson',
     cover: '/assets/books/steve-jobs.jpg',
-    status: 'reading',
+    status: 'read',
+    date: '2026-09',
   },
-
-  // ── Q3 2026 ─────────────────────────────────────────────────────────
   {
     title: 'Misogyny', // 厌女 — Japanese original (Japanese-edition cover)
     author: 'Chizuko Ueno',
