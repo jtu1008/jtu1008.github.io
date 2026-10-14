@@ -42,6 +42,13 @@ export const books: Book[] = [
 
   // ── Q3 2026 ─────────────────────────────────────────────────────────
   {
+    title: 'Atomic Habits', // English original
+    author: 'James Clear',
+    cover: '/assets/books/atomic-habits.jpg',
+    status: 'read',
+    date: '2026-09',
+  },
+  {
     title: 'Being Mortal', // Medicine and What Matters in the End — English original
     author: 'Atul Gawande',
     cover: '/assets/books/being-mortal.jpg',
